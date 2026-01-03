@@ -13,7 +13,7 @@ mod serial;
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     println!("{info}");
-    loop {}
+    blog_os::hlt_loop();
 }
 
 #[cfg(test)]
@@ -33,7 +33,7 @@ pub extern "C" fn _start() -> ! {
 
     println!("It did not crash!");
 
-    loop {}
+    blog_os::hlt_loop()
 }
 
 #[test_case]
