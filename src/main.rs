@@ -5,12 +5,23 @@
 #![reexport_test_harness_main = "test_main"]
 
 mod vga_buffer;
+mod serial;
 
 use core::panic::PanicInfo;
 
+#[cfg(not(test))]
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
-    println!("{_info}");
+fn panic(info: &PanicInfo) -> ! {
+    println!("{info}");
+    loop {}
+}
+
+#[cfg(test)]
+#[panic_handler]
+fn panic(info: &PanicInfo) -> ! {
+    serial_println!("[failed]\n");
+    serial_println!("Error: {}\n", info);
+    exit_qemu(QemuExitCode::Failed);
     loop {}
 }
 
@@ -31,7 +42,7 @@ pub enum QemuExitCode {
     Failed = 0x11,
 }
 
-pub fn exit_eqmu(exit_code: QemuExitCode) {
+pub fn exit_qemu(exit_code: QemuExitCode) {
     use x86_64::instructions::port::Port;
 
     let mut port = Port::new(0xf4);
@@ -43,17 +54,17 @@ pub fn exit_eqmu(exit_code: QemuExitCode) {
 
 #[cfg(test)]
 pub fn test_runner(tests: &[&dyn Fn()]) {
-    println!("Running {} tests", tests.len());
+    serial_print!("Running {} tests", tests.len());
     for test in tests {
         test();
     }
-    exit_eqmu(QemuExitCode::Success);
+    exit_qemu(QemuExitCode::Success);
 }
 
 
 #[test_case]
 fn trivial_assertion() {
-    print!("trivial assertion...");
+    serial_print!("trivial assertion...");
     assert_eq!(1, 1);
-    println!("[ok]");
+    serial_println!("[ok]");
 }
