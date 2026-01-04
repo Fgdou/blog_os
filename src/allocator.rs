@@ -1,13 +1,14 @@
 pub mod bump;
+pub mod linked_list;
 
 use core::{alloc::GlobalAlloc, ptr::null_mut};
 
 use x86_64::{VirtAddr, structures::paging::{FrameAllocator, Mapper, Page, PageTableFlags, Size4KiB, mapper::MapToError}};
 
-use crate::allocator::bump::{BumpAllocator, Locked};
+use crate::allocator::{bump::Locked, linked_list::LinkedListAllocator};
 
 #[global_allocator]
-static ALLOCATOR: Locked<BumpAllocator> = Locked::new(BumpAllocator::new());
+static ALLOCATOR: Locked<LinkedListAllocator> = Locked::new(LinkedListAllocator::new());
 
 pub const HEAP_START: usize = 0x_4444_4444_0000;
 pub const HEAP_SIZE: usize = 100 * 1024; // 10KiB;
