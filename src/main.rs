@@ -4,8 +4,11 @@
 #![test_runner(blog_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
+extern crate alloc;
+
 use core::panic::PanicInfo;
 
+use alloc::boxed::Box;
 use bootloader::{BootInfo, entry_point};
 
 mod vga_buffer;
@@ -33,6 +36,8 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
 
     #[cfg(test)]
     test_main();
+
+    let x = Box::new(1);
 
     println!("It did not crash!");
 
