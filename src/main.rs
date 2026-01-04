@@ -8,7 +8,6 @@ extern crate alloc;
 
 use core::panic::PanicInfo;
 
-use alloc::{boxed::Box, vec::Vec};
 use blog_os::{allocator, memory::{self, BootInfoFrameAllocator}};
 use bootloader::{BootInfo, entry_point};
 use x86_64::VirtAddr;
